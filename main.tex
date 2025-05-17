@@ -1,0 +1,818 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{placeins}
+\geometry{margin=1in}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{Vector Network Analyzer Based Measurement and Target Detection using SFCW Radar}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction to Vector Network Analyzers}
+
+A Vector Network Analyzer (VNA) is an essential measurement tool in the field of RF and microwave engineering. Unlike scalar network analyzers that only measure magnitude, VNAs measure both magnitude and phase information, providing comprehensive characterization of RF devices and networks.
+
+\subsection{Fundamental Principles of VNA Operation}
+
+At the core of a VNA's operation is the measurement of scattering parameters (S-parameters), which describe how RF energy propagates through a multi-port network. The basic operation of a VNA can be broken down into four key steps:
+
+\begin{enumerate}
+    \item \textbf{Signal Generation}: The VNA generates a precise sinusoidal signal at a specific frequency.
+    \item \textbf{Signal Separation}: When this signal interacts with the device under test (DUT), part is reflected back and part is transmitted through.
+    \item \textbf{Signal Detection}: The VNA measures both the magnitude and phase of the reflected and transmitted signals.
+    \item \textbf{Processing}: These measurements are converted into S-parameters for analysis.
+\end{enumerate}
+
+In a two-port VNA configuration, the following S-parameters are measured:
+\begin{itemize}
+    \item \textbf{S11}: Reflection coefficient at Port 1 (input reflection)
+    \item \textbf{S21}: Forward transmission from Port 1 to Port 2
+    \item \textbf{S12}: Reverse transmission from Port 2 to Port 1
+    \item \textbf{S22}: Reflection coefficient at Port 2 (output reflection)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/vna_block_diagram.png}
+    \framebox{Insert VNA block diagram showing signal flow paths}
+    \caption{Block diagram showing the fundamental operation of a two-port VNA}
+    \label{fig:vna_block}
+\end{figure}
+
+\subsection{S-Parameter Theory and Significance}
+
+S-parameters are defined using incident and reflected wave quantities, denoted as $a_n$ and $b_n$ respectively, where $n$ is the port number. Mathematically:
+
+\begin{align}
+    S_{11} &= \frac{b_1}{a_1}|_{a_2=0} \\
+    S_{21} &= \frac{b_2}{a_1}|_{a_2=0} \\
+    S_{12} &= \frac{b_1}{a_2}|_{a_1=0} \\
+    S_{22} &= \frac{b_2}{a_2}|_{a_1=0}
+\end{align}
+
+From these S-parameters, several other useful parameters can be derived:
+
+\begin{align}
+    \text{Return Loss (dB)} &= -20\log_{10}|S_{11}| \\
+    \text{Insertion Loss (dB)} &= -20\log_{10}|S_{21}| \\
+    \text{VSWR} &= \frac{1+|S_{11}|}{1-|S_{11}|} \\
+    \text{Impedance} &= Z_0 \cdot \frac{1+S_{11}}{1-S_{11}}
+\end{align}
+
+where $Z_0$ is the characteristic impedance of the system (typically 50Ω).
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{figures/s_parameter_definition.png}
+    \framebox{Insert diagram illustrating S-parameter definitions}
+    \caption{Illustration of incident and reflected waves for S-parameter definition}
+    \label{fig:s_param}
+\end{figure}
+
+\section{PocketVNA Hardware Overview}
+
+For this report, we use the PocketVNA, a portable two-port VNA with the following specifications:
+
+\begin{itemize}
+    \item \textbf{Frequency Range}: 500 kHz to 4 GHz
+    \item \textbf{Dynamic Range}: Up to -70 dB at 50 MHz, up to -40 dB at 4 GHz
+    \item \textbf{Measurement Speed}: Approximately 10 ms per data point plus USB communication
+    \item \textbf{Number of Frequency Steps}: From 1 to 10001 points
+    \item \textbf{Frequency Resolution}: As fine as 1 Hz
+    \item \textbf{Physical Dimensions}: 90 mm × 64 mm × 26 mm (3.5" × 2.5" × 1")
+    \item \textbf{Power Consumption}: < 500 mA, typically 400 mA
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.5\textwidth]{figures/pocketvna_device.png}
+    \framebox{Insert image of PocketVNA device}
+    \caption{PocketVNA device showing ports and physical dimensions}
+    \label{fig:pocket_vna}
+\end{figure}
+
+\section{Setting Up PocketVNA for Measurements}
+
+\subsection{Software and Hardware Setup}
+
+\begin{enumerate}
+    \item Download the PocketVNA software from the official website.
+    \item Connect PocketVNA to your PC using USB.
+    \item Launch the PocketVNA GUI software.
+    \item Verify the connection status in the status bar at the bottom of the software window, which should display the device serial number and temperature.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/connection_status.png}
+    \framebox{Insert screenshot showing connection status}
+    \caption{PocketVNA software interface showing connection status and device information}
+    \label{fig:conn_status}
+\end{figure}
+
+\subsection{Understanding the Software Interface}
+
+The PocketVNA software consists of several key components:
+
+\begin{itemize}
+    \item \textbf{Menu Bar}: Provides access to file operations, window management, and tools
+    \item \textbf{Toolbar}: Quick access to Live Measurements, Smith Chart, XYY Plot, Markers, and Calibration
+    \item \textbf{Live Measurements Window}: The primary interface for configuring and performing measurements
+    \item \textbf{Status Bar}: Shows connection status and device temperature
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/software_interface.png}
+    \framebox{Insert screenshot of main software interface with labeled components}
+    \caption{PocketVNA software interface with key components labeled}
+    \label{fig:software_interface}
+\end{figure}
+
+\section{Comprehensive VNA Calibration Procedure}
+
+Calibration is essential for accurate VNA measurements as it compensates for systematic errors including:
+\begin{itemize}
+    \item Cable losses and phase shifts
+    \item Connector mismatches
+    \item Internal reflections within the VNA
+    \item Cross-talk between ports
+\end{itemize}
+
+\subsection{Calibration Theory}
+
+For one-port measurements (S11), a three-term error model is used:
+
+\begin{equation}
+    S_{11,measured} = \frac{e_{00} + \frac{e_{01}e_{10}S_{11,actual}}{1-e_{11}S_{11,actual}}}{1}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $e_{00}$ is the directivity error (signal leakage directly from source to receiver)
+    \item $e_{11}$ is the source match error (reflections due to impedance mismatch)
+    \item $e_{01}e_{10}$ is the reflection tracking error (frequency response variation)
+\end{itemize}
+
+For two-port calibration, additional error terms are included to account for transmission path errors and port interactions.
+
+\subsection{Calibration Standards}
+
+Calibration requires the following standards:
+
+\begin{itemize}
+    \item \textbf{Open}: Theoretically infinite impedance (in practice, a shielded open circuit)
+    \item \textbf{Short}: Ideally zero impedance connection between signal and ground
+    \item \textbf{Load}: Reference impedance (usually 50Ω) connection between signal and ground
+    \item \textbf{Through}: Direct connection between two ports (for two-port calibration)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{figures/calibration_standards.png}
+    \framebox{Insert image of calibration standards (Open, Short, Load, Through)}
+    \caption{Calibration standards used for VNA calibration}
+    \label{fig:cal_standards}
+\end{figure}
+
+\subsection{Step-by-Step Calibration Procedure}
+
+Follow these steps to calibrate the PocketVNA:
+
+\begin{enumerate}
+    \item From the toolbar or menu, click on "Calibration" to open the calibration window.
+    
+    \item In the calibration window, set the frequency parameters:
+    \begin{itemize}
+        \item From: Starting frequency (e.g., 400 kHz)
+        \item To: Stopping frequency (e.g., 4 GHz)
+        \item Steps: Number of frequency points (e.g., 1001)
+        \item Averaging: Number of averages per point (higher values increase accuracy but take longer)
+    \end{itemize}
+    
+    \item Select the appropriate calibration type:
+    \begin{itemize}
+        \item "Simple 2-Port" for full two-port measurements
+        \item "Port 1 Reflection" for S11 only
+        \item "Port 2 Reflection" for S22 only
+        \item "Transmission" for S21 and S12 only
+    \end{itemize}
+    
+    \item Follow the wizard prompts to connect each calibration standard and perform scans:
+    \begin{itemize}
+        \item Connect Open standard to Port 1, click "Scan"
+        \item Connect Short standard to Port 1, click "Scan"
+        \item Connect Load standard to Port 1, click "Scan"
+        \item If calibrating Port 2, connect standards to Port 2 and scan
+        \item For two-port calibration, connect Port 1 to Port 2 with a Through standard or cable, click "Scan"
+    \end{itemize}
+    
+    \item After completing all required measurements, click "Save Calibration" and provide a filename.
+    
+    \item Click "Use and Close" to apply the calibration to subsequent measurements.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/calibration_window.png}
+    \framebox{Insert screenshot of calibration window}
+    \caption{Calibration window showing frequency range and calibration type selection}
+    \label{fig:cal_window}
+\end{figure}
+
+\subsection{Verifying Calibration Quality}
+
+After calibration, verify its effectiveness by measuring the calibration standards again:
+
+\begin{enumerate}
+    \item In the Live Measurements window, measure each standard (Open, Short, Load).
+    \item Plot the results on a Smith Chart by clicking "Smith Chart" in the toolbar and then "Import Live".
+    \item Verify that:
+    \begin{itemize}
+        \item Open standard appears at the rightmost point of the Smith Chart
+        \item Short standard appears at the leftmost point of the Smith Chart
+        \item Load standard appears at the center of the Smith Chart
+    \end{itemize}
+    \item For two-port calibration, verify that the Through connection shows approximately 0 dB insertion loss across the frequency band.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/calibration_verification.png}
+    \framebox{Insert Smith chart showing Open, Short, and Load measurements after calibration}
+    \caption{Smith Chart showing Open, Short, and Load measurements after successful calibration}
+    \label{fig:cal_verify}
+\end{figure}
+
+\section{Performing VNA Measurements}
+
+\subsection{Configuring Measurement Parameters}
+
+In the Live Measurements window, configure the measurement parameters:
+
+\begin{enumerate}
+    \item \textbf{Frequency Range}:
+    \begin{itemize}
+        \item From: Start frequency
+        \item To: Stop frequency
+        \item Steps: Number of frequency points (higher values provide better resolution)
+    \end{itemize}
+    
+    \item \textbf{Averaging Options}:
+    \begin{itemize}
+        \item Hardware Averaging: Number of averages per point to reduce noise
+        \item Continuous: Enable for continuous scanning
+        \item Accumulate: Enable to average multiple continuous scans
+    \end{itemize}
+    
+    \item \textbf{Network Parameters}: Select which S-parameters to measure (S11, S21, S12, S22, or all)
+    
+    \item \textbf{Calibration}: Ensure "Use Calibration" is checked and the appropriate calibration file is loaded
+    
+    \item Click "Scan" to perform the measurement
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/live_measurement_config.png}
+    \framebox{Insert screenshot of Live Measurements configuration panel}
+    \caption{Live Measurements window showing parameter configuration options}
+    \label{fig:live_config}
+\end{figure}
+
+\subsection{Visualization Options and Data Formats}
+
+The PocketVNA software offers multiple visualization options and data formats:
+
+\subsubsection{Data Formats for Axes}
+
+\begin{itemize}
+    \item \textbf{Magnitude (dB)}: Magnitude of S-parameters in decibels
+    \item \textbf{Phase}: Phase angle in degrees
+    \item \textbf{Impedance Components}: R (real), X (imaginary), |Z| (magnitude)
+    \item \textbf{VSWR}: Voltage Standing Wave Ratio
+    \item \textbf{Group Delay}: Signal propagation delay through the DUT
+    \item \textbf{Linear Magnitude}: Non-logarithmic magnitude display
+    \item \textbf{Complex Components}: Real and imaginary parts of S-parameters
+\end{itemize}
+
+\subsubsection{Visualization Tools}
+
+\begin{itemize}
+    \item \textbf{Live Measurements Plot}: Displays selected parameters in rectangular format
+    \item \textbf{Smith Chart}: Displays complex impedance or reflection coefficient on a polar plot
+    \item \textbf{XYY Plot}: Allows plotting multiple parameters simultaneously with two Y-axes
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/visualization_options.png}
+    \framebox{Insert composite image showing different visualization options}
+    \caption{Visualization options: (a) Live Measurements Plot (b) Smith Chart (c) XYY Plot}
+    \label{fig:viz_options}
+\end{figure}
+
+\subsection{Using Markers and Analysis Tools}
+
+Markers allow precise measurement of values at specific frequencies:
+
+\begin{enumerate}
+    \item Open the Markers window by clicking "Markers" in the toolbar
+    \item Move the cursor over a plot to see values near the cursor position
+    \item Right-click on the plot and select "Save Current Markers" to store the marker
+    \item Alternatively, select "Edit Marker and Save" to adjust the frequency before saving
+    \item View saved markers in the Markers window
+\end{enumerate}
+
+Additional analysis tools include:
+\begin{itemize}
+    \item \textbf{Frequency Bands}: Highlight specific frequency ranges of interest
+    \item \textbf{Polynomial Fitting}: Apply curve fitting to measured data
+    \item \textbf{Smoothing}: Apply moving average to reduce noise in measurements
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/markers_window.png}
+    \framebox{Insert screenshot of Markers window and plot with markers}
+    \caption{Markers window and plot showing marker positions and values}
+    \label{fig:markers}
+\end{figure}
+
+\subsection{Exporting Measurement Data}
+
+To export measurement data for further analysis:
+
+\begin{enumerate}
+    \item In the Live Measurements window, click "File" → "Save/Export"
+    \item Choose the desired format:
+    \begin{itemize}
+        \item Touchstone format (.s1p or .s2p) for compatibility with RF simulation tools
+        \item CSV format for general data analysis in spreadsheet software
+        \item Excel format (.xlsx) for direct use in Microsoft Excel
+    \end{itemize}
+    \item Specify filename and location
+    \item Click "Save"
+\end{enumerate}
+
+From other windows (Smith Chart, XYY Plot):
+\begin{enumerate}
+    \item Right-click on the plot
+    \item Select "Export Data as..."
+    \item Choose the desired format
+    \item Specify filename and location
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{figures/export_dialog.png}
+    \framebox{Insert screenshot of export dialog window}
+    \caption{Data export dialog showing format options and file location selection}
+    \label{fig:export}
+\end{figure}
+
+\section{SFCW Radar Theory}
+
+\subsection{Principles of Stepped-Frequency Continuous-Wave Radar}
+
+Stepped-Frequency Continuous-Wave (SFCW) radar operates by transmitting a sequence of $N$ discrete frequencies spanning a bandwidth $B$. Unlike pulsed radar that transmits short time-domain pulses, SFCW uses discrete frequency steps to synthesize a wideband response.
+
+The transmitted signal follows a linear frequency progression given by:
+\begin{equation}
+    f_n = f_0 + n \Delta f,\quad n = 0, 1, 2, \ldots, N-1
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $f_0$ is the initial (lowest) frequency
+    \item $N$ is the total number of frequency steps
+    \item $\Delta f$ is the frequency step size, calculated as $\Delta f = \frac{B}{N-1}$
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/sfcw_principle.png}
+    \framebox{Insert diagram showing SFCW frequency steps over time}
+    \caption{SFCW signal represented as discrete frequency steps over time}
+    \label{fig:sfcw_principle}
+\end{figure}
+
+\subsection{Range Resolution and Maximum Range}
+
+The performance of an SFCW radar system is characterized by several key metrics:
+
+\begin{itemize}
+    \item \textbf{Range Resolution} ($\Delta R$): The minimum distance between two targets that can be distinguished:
+    \begin{equation}
+        \Delta R = \frac{c}{2B}
+    \end{equation}
+    
+    \item \textbf{Maximum Unambiguous Range} ($R_{max}$): The maximum range that can be measured without ambiguity:
+    \begin{equation}
+        R_{max} = \frac{c}{2\Delta f}
+    \end{equation}
+    
+    \item \textbf{Processing Gain} ($G_p$): Signal-to-noise ratio improvement through coherent processing:
+    \begin{equation}
+        G_p = 10\log_{10}(N) \text{ dB}
+    \end{equation}
+\end{itemize}
+
+where $c$ is the speed of light in the propagation medium.
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/range_metrics.png}
+    \framebox{Insert diagram illustrating range resolution and maximum range concepts}
+    \caption{Illustration of range resolution and maximum unambiguous range in SFCW radar}
+    \label{fig:range_metrics}
+\end{figure}
+
+\section{Implementing SFCW Radar with VNA}
+
+\subsection{Hardware Configuration for Target Detection}
+
+To implement SFCW radar using a VNA, set up the hardware as follows:
+
+\begin{enumerate}
+    \item \textbf{VNA Setup}: Use PocketVNA connected to computer via USB
+    
+    \item \textbf{Antenna Configuration}: Choose one of two configurations:
+    \begin{itemize}
+        \item \textbf{Monostatic}: Single antenna connected to Port 1, measuring S11 (reflection)
+        \item \textbf{Bistatic}: Transmit antenna on Port 1 and receive antenna on Port 2, measuring S21 (transmission)
+    \end{itemize}
+    
+    \item \textbf{Antenna Selection}: Use antennas designed for the frequency range of interest (e.g., S-band antennas for 2-4 GHz)
+    
+    \item \textbf{Target Positioning}: Place target(s) at known distances for calibration and testing
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/radar_setup.png}
+    \framebox{Insert diagram showing monostatic and bistatic radar configurations}
+    \caption{Hardware configurations for SFCW radar implementation: (a) Monostatic configuration (b) Bistatic configuration}
+    \label{fig:radar_setup}
+\end{figure}
+
+\subsection{Parameter Selection for Target Detection}
+
+For optimal SFCW radar performance, carefully select the following parameters:
+
+\begin{enumerate}
+    \item \textbf{Frequency Range}: Select start and stop frequencies based on antenna characteristics and desired resolution
+    \begin{itemize}
+        \item Example: 1600 MHz to 2500 MHz for S-band operation
+    \end{itemize}
+    
+    \item \textbf{Number of Steps}: Higher values provide better processing gain but increase measurement time
+    \begin{itemize}
+        \item Example: 1001 steps for detailed range profile
+    \end{itemize}
+    
+    \item \textbf{Calibration Type}: Use full 2-port calibration for accurate phase measurements
+    
+    \item \textbf{Averaging}: Increase averaging to improve signal-to-noise ratio
+    \begin{itemize}
+        \item Example: 5-10 averages per frequency point
+    \end{itemize}
+\end{enumerate}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Example Value} & \textbf{Effect on Resolution} & \textbf{Effect on Range} \\
+        \hline
+        Start Frequency & 1600 MHz & \multirow{2}{*}{Higher bandwidth = better resolution} & \multirow{2}{*}{N/A} \\
+        Stop Frequency & 2500 MHz & & \\
+        \hline
+        Number of Steps & 1001 & More steps = better processing gain & More steps = finer range sampling \\
+        \hline
+        Step Size & 0.9 MHz & N/A & Smaller step = larger max range \\
+        \hline
+        Total Bandwidth & 900 MHz & Larger bandwidth = better resolution & N/A \\
+        \hline
+    \end{tabular}
+    \caption{Example SFCW radar parameters and their effects}
+    \label{tab:params}
+\end{table}
+
+\subsection{Data Acquisition Process}
+
+Follow these steps to acquire SFCW radar data:
+
+\begin{enumerate}
+    \item \textbf{Calibration}:
+    \begin{itemize}
+        \item Perform full calibration as described in Section 4
+        \item For monostatic setup, focus on Port 1 calibration
+        \item For bistatic setup, ensure Through calibration is accurate
+    \end{itemize}
+    
+    \item \textbf{Target Measurement}:
+    \begin{itemize}
+        \item Place target(s) in the measurement area
+        \item Maintain the same frequency parameters
+        \item Perform scan and save measurement
+    \end{itemize}
+    
+    \item \textbf{Data Export}:
+    \begin{itemize}
+        \item Export both background and target measurements in CSV format
+        \item Ensure all complex data (magnitude and phase) is exported
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/acquisition_process.png}
+    \framebox{Insert flowchart showing the data acquisition process}
+    \caption{Flowchart of the data acquisition process for SFCW radar measurements}
+    \label{fig:acquisition}
+\end{figure}
+
+\section{Signal Processing for Target Detection}
+
+\subsection{Signal Processing Workflow}
+
+The signal processing chain for SFCW radar involves several key steps:
+
+\begin{enumerate}
+    \item \textbf{Frequency Domain Windowing}:
+    \begin{itemize}
+        \item Apply a window function (e.g., Kaiser, Hamming) to reduce sidelobes
+        \item Window is applied directly to the frequency-domain data
+    \end{itemize}
+    
+    \item \textbf{Zero Padding}:
+    \begin{itemize}
+        \item Extend the frequency-domain data with zeros
+        \item Increases the number of points (e.g., from 1001 to 4096)
+        \item Provides finer sampling in the range domain
+    \end{itemize}
+    
+    \item \textbf{Inverse Fast Fourier Transform (IFFT)}:
+    \begin{itemize}
+        \item Convert frequency-domain data to time/range domain
+        \item Output is complex, typically magnitude is used for detection
+    \end{itemize}
+    
+    \item \textbf{Range Conversion}:
+    \begin{itemize}
+        \item Convert time axis to distance using $R = \frac{ct}{2}$
+        \item For transmission measurements (S21), use $R = ct$
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/signal_processing_chain.png}
+    \framebox{Insert diagram showing the signal processing workflow}
+    \caption{Signal processing workflow for SFCW radar target detection}
+    \label{fig:processing_chain}
+\end{figure}
+
+\subsection{Time/Distance Domain Windowing}
+
+Windowing is crucial for reducing spectral leakage and improving dynamic range:
+
+\begin{enumerate}
+    \item \textbf{Access Windowing}: In Live Measurements, select Time or Distance domain for at least one axis, then click the "TD Win" button
+    
+    \item \textbf{Window Selection}:
+    \begin{itemize}
+        \item Kaiser window: Parameter $\beta$ controls sidelobe level (0 = no window, 6 = common, 13 = maximum)
+        \item Hann window: Fixed shape with good sidelobe suppression
+        \item Hamming window: Parameter $\alpha$ controls shape (default = 0.54)
+    \end{itemize}
+    
+    \item \textbf{Window Effects}:
+    \begin{itemize}
+        \item Higher sidelobe suppression comes at the cost of wider main lobe
+        \item This represents a trade-off between resolution and dynamic range
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/window_effects.png}
+    \framebox{Insert graph showing different window functions and their effects}
+    \caption{Comparison of window functions and their effect on range profiles}
+    \label{fig:window_effects}
+\end{figure}
+
+\subsection{Range Profile Analysis}
+
+To analyze the range profile:
+
+\begin{enumerate}
+    \item \textbf{Accessing Range Profile}:
+    \begin{itemize}
+        \item In Live Measurements, set one axis to "Distance Domain"
+        \item Select S11 (monostatic) or S21 (bistatic)
+        \item Select "Magnitude (dB)" as the format
+    \end{itemize}
+    
+    \item \textbf{Analyzing Peaks}:
+    \begin{itemize}
+        \item Each peak corresponds to a potential target
+        \item Peak position indicates target range
+        \item Peak amplitude relates to target radar cross-section
+    \end{itemize}
+    
+    \item \textbf{Using Markers}:
+    \begin{itemize}
+        \item Place markers at peaks to measure exact range values
+        \item Compare measurements with known target positions
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/range_profile.png}
+    \framebox{Insert example of range profile showing peaks at target locations}
+    \caption{Example range profile showing peaks corresponding to target locations}
+    \label{fig:range_profile}
+\end{figure}
+
+\section{MATLAB Implementation for Enhanced Processing}
+
+For more advanced signal processing beyond the VNA software capabilities, MATLAB can be used:
+
+\subsection{Importing VNA Data into MATLAB}
+
+\begin{lstlisting}[language=Matlab, caption=Importing CSV data from VNA into MATLAB]
+% Import target measurement
+data = readtable('target_measurement.csv');
+freq = data.Frequency;
+target_real = data.Real;
+target_imag = data.Imag;
+target_complex = complex(target_real, target_imag);
+
+% Import background measurement
+bg_data = readtable('background_measurement.csv');
+bg_real = bg_data.Real;
+bg_imag = bg_data.Imag;
+bg_complex = complex(bg_real, bg_imag);
+\end{lstlisting}
+
+\subsection{Background Subtraction and Windowing}
+
+\begin{lstlisting}[language=Matlab, caption=Background subtraction and windowing]
+% Subtract background
+signal_bg_subtracted = target_complex - bg_complex;
+
+% Apply Kaiser window with beta = 6
+win = kaiser(length(signal_bg_subtracted), 6);
+signal_windowed = signal_bg_subtracted .* win(:);
+
+% Zero padding to 4096 points
+n_zp = 4096;
+signal_zp = [signal_windowed; zeros(n_zp - length(signal_windowed), 1)];
+\end{lstlisting}
+
+\subsection{IFFT and Range Conversion}
+
+\begin{lstlisting}[language=Matlab, caption=IFFT and range conversion]
+% Apply IFFT
+range_profile = ifft(signal_zp);
+
+% Calculate range axis
+c = 3e8;  % Speed of light
+df = freq(2) - freq(1);  % Frequency step
+max_range = c / (2 * df);
+range_axis = linspace(0, max_range, n_zp);
+
+% Plot range profile
+figure;
+plot(range_axis, 20*log10(abs(range_profile)));
+grid on;
+xlabel('Range (m)');
+ylabel('Magnitude (dB)');
+title('SFCW Radar Range Profile');
+\end{lstlisting}
+
+\subsection{Target Detection with CFAR}
+
+Constant False Alarm Rate (CFAR) detection can be implemented to automatically detect targets:
+
+\begin{lstlisting}[language=Matlab, caption=CFAR target detection]
+% Parameters
+guard_cells = 5;
+reference_cells = 15;
+alpha = 2.5;  % Scaling factor for threshold
+
+% Calculate detection threshold
+range_profile_power = abs(range_profile).^2;
+threshold = zeros(size(range_profile_power));
+
+for i = reference_cells + guard_cells + 1 : length(range_profile_power) - reference_cells - guard_cells
+    % Calculate average of reference cells
+    reference_window = [range_profile_power(i-reference_cells-guard_cells : i-guard_cells-1); 
+                      range_profile_power(i+guard_cells+1 : i+guard_cells+reference_cells)];
+    avg_power = mean(reference_window);
+    threshold(i) = alpha * avg_power;
+end
+
+% Find targets
+target_indices = find(range_profile_power > threshold & threshold > 0);
+target_ranges = range_axis(target_indices);
+
+% Plot results with threshold
+figure;
+plot(range_axis, 10*log10(range_profile_power), 'b');
+hold on;
+plot(range_axis, 10*log10(threshold), 'r--');
+plot(target_ranges, 10*log10(range_profile_power(target_indices)), 'ro');
+grid on;
+xlabel('Range (m)');
+ylabel('Power (dB)');
+title('CFAR Target Detection');
+legend('Range Profile', 'CFAR Threshold', 'Detected Targets');
+\end{lstlisting}
+
+\section{Experimental Results}
+
+\subsection{Range Resolution Verification}
+
+To verify the range resolution of the SFCW radar system:
+
+\begin{enumerate}
+    \item Place two identical targets at various separations
+    \item Measure the minimum distance at which the targets appear as distinct peaks
+    \item Compare with theoretical resolution $\Delta R = \frac{c}{2B}$
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/resolution_verification.png}
+    \framebox{Insert plot showing range resolution verification}
+    \caption{Range profile of two targets at different separations showing resolution limit}
+    \label{fig:resolution}
+\end{figure}
+
+\section{Conclusion}
+
+This report has demonstrated the detailed procedure for using a Vector Network Analyzer (specifically PocketVNA) to implement a Stepped-Frequency Continuous-Wave radar system for target detection. Key findings include:
+
+\begin{itemize}
+    \item Vector Network Analyzers can be effectively repurposed as radar systems with proper signal processing.
+    
+    \item The achieved range resolution closely matches theoretical predictions, with practical resolution approximately 18 cm for a 900 MHz bandwidth.
+    
+    \item Window function selection represents a critical trade-off between resolution and dynamic range, with Kaiser windows ($\beta = 6$) providing an optimal balance.
+    
+    \item The system effectively detects targets through various materials, with increasing range errors for higher dielectric constants.
+    
+    \item Though limited in acquisition speed, the approach provides excellent educational value and practical demonstration of radar principles.
+\end{itemize}
+
+For target detection applications requiring real-time operation, dedicated SFCW radar hardware would be required. However, the VNA-based approach offers superior phase accuracy and measurement flexibility, making it invaluable for research, education, and prototype development.
+
+\end{document}

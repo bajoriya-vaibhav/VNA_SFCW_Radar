@@ -1,0 +1,1186 @@
+﻿Software and Hardware Documentation and Manual
+
+
+pocketVNA 1.x, 2.x, 3.x, 6G; update for GUI software version 1.92
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Copyright 2017 to 2024 by pocketVNA - Winkl 8 D-83115 Neubeuern Germany
+________________
+  General Information        3
+Introduction:        3
+Software Installation        4
+Connect hardware        4
+Quick Start guide        4
+Main window        8
+Menu        9
+App Settings        10
+External coupler        10
+Signal generator        14
+Calibration        15
+Starting range step        16
+Calibration Kit setup        18
+pVNA SMA male or female calibration kit        18
+pVNA U.FL calibration and test board        21
+Other calibration kits        22
+Taking measurements step        22
+Finish Step        23
+Live Measurements        25
+Time/Distance domain Windowing        28
+How windowing does work        29
+Port Extension        30
+De-Embedding        34
+Smith Chart        35
+XYY Plot        38
+Markers        41
+Edit Markers and Save dialog        42
+Frequency ranges        42
+Importing/Exporting data        43
+Hardware specification        44
+Example measurements        46
+75 Ohms measurement        46
+Attenuator, noise floor and dynamic range measurements:        50
+2.4 GHz WLAN antenna        53
+Filter measurement (transmission) and comparison with lab scale equipment        53
+Troubleshooting:        56
+Check for Hardware issues:        56
+Check for Software problems:        58
+________________
+General Information
+PocketVNA is a research tool for laboratory usage only. Keep away from humid or hazardous places. Always read the manual and safety instructions prior before using the pocketVNA.
+This is a temperature sensitive measurement device! Exposure to temperature or direct sunlight might affect measurement results!
+This manual is applicable to pocketVNA 1.x, 2.x and 3.x hardware versions. 
+Introduction:
+With the pocketVNA you can measure a variety of electrical parameters in the range from below 1 MHz up to 4 GHz. In order to properly make use of this measurement device you should be comfortable with the following concepts:
+- S Parameter
+- Any other electrical parameter you are interested in measuring (return/transmission loss, VSWR, complex impedance…)
+In short: A frequency generator inside the pocketVNA creates a voltage oscillating at the given frequency. At the frequencies we are measuring, the created signal can be considered as an electromagnetic wave travelling along e.g. a cable connected to the pocketVNA port. When this signal is input to the device under test (DUT), the signal is altered in phase and amplitude.
+In a 1-port configuration what is measured is the wave that is reflected from the DUT back into the pocketVNA port. The measured scattering parameter (= S parameter) S11 is the ratio between the incident and the reflected wave. The theoretical minimum of S11 is 0, that is when nothing of the signal is reflected. For passive devices it is maximum 1, when 100% of the incident wave is reflected. For active devices (e.g. an amplifier) S11 can be higher than 1.
+In a 2-port configuration (DUT is connected to both port 1 and port 2) we also can measure S21, that is the ratio between the voltage output from port 1 and the input in port 2.
+Note that both S21 and S11 are complex numbers. Real part of the S-parameter represents the change in magnitude, the imaginary part represents a phase shift.
+Gain or loss can be calculated by converting the S parameter into decibels:
+g=20* log10(|S|); where S is either S11 or S21
+From the S parameters, other measures such as the impedance Z or VSWR can be calculated:
+
+
+Z = 50 * (1-S)/(1+S);
+s = (1+|S|)/(1-||S|)
+
+
+Software
+
+
+Here you can find all information on how to set-up the pocketVNA for measurements and how to use it.
+
+
+Note: Even though the screenshots used in the documentation are made on Windows, MacOS or Linux, the software usage is identical on all operating systems with very few exceptions.
+
+
+Software Installation
+ Download the pocketVNA software from here.
+Connect hardware
+
+
+Connect the PocketVNA to your computer. Your computer (Windows, MacOS, Linux) will automatically recognize the hardware. You might see some installation information on Windows computers which you can ignore. 
+
+
+Copy the file into a folder of your choice and unzip it. You can copy the unzipped file to any folder on your computer. After starting the  software  you will see the devices connected to your computer with serial number and the device temperature on the lower right side of the software. This information shows the version of the connected hardware and firmware. 
+Your system is set up and  ready for measurement. 
+
+  
+
+Figure 1. The status section shows the connected devices.
+
+
+
+Quick Start guide
+After opening the software you will see a window "live measurements", where all measurements are performed. There are other windows that can be opened using the menu bar:
+  
+
+Figure 2. The menu bar
+
+
+Live Measurement:  This will reopen the "Live Measurement" window if you have closed it.
+Smith Chart:  This will open a window where you can plot your data in a Smith Chart
+XYY Plot:  This will open a window with a XY Plot (Having up to two Y-axes). You can open more than one plot window.
+Markers: Set and save markers in the plots
+Calibration:  Here you can do all calibration procedures required for the measurement.
+
+Calibration:
+It is absolutely required that you create a valid calibration prior to your first measurement. For this, click on "Calibration". The calibration window opens.
+
+
+  
+
+Figure 3. The calibration start window. Calibration range and calibration type can be selected here.
+
+
+Select with "From", "To" and "Steps" the frequency span and number of measurement steps for your calibration. These numbers should be around the values you want to use for your measurement later. For improved accuracy, increase "Averaging" for example to 5. Please note that the measurement will take 5 times longer now but will have a higher accuracy.
+
+
+For a general "all-round" calibration , you could start with
+Start: 400kHz
+Stop: 4200MHz
+Steps: 1001
+Average:1
+Quality: Normal
+Simple 2-Port
+
+
+For enhanced sensitivity  in a limited frequency span the following setting can be used:
+Start: lower frequency of the region of interest
+Stop: upper frequency of the region of interest
+Steps: 101
+Average:10
+Quality: Slow
+Now you need to perform one scan for each of the calibration standards:
+-  Open : Connect your "Open" calibration standard to the DUT port and press "Scan". If you are happy with the curved recorded clock "Use as open".
+  
+
+Figure 4. 
+-  Short  and  Load : Proceed the same way for your "Short" and your "Load" standard. Then save your calibration by clicking on  "save calibration"  and afterwards click on  "Use and close"
+  
+  
+
+Figure 6. 
+When asked to connect a cable between port 1 and port 2 for through calibration, use a coax cable to connect port 1 and port 2:
+  
+
+Figure 7. 
+It is always a very good idea to check if your calibration procedure has been successful . You can do this by measuring S11 with open/short/load standard connected:
+Open the "live measurement" window, enter your desired scan parameters (From, To, Steps) , ideally the same you used for the calibration and press scan.
+Do this measurement for all three standards (Open, Short, Load) and import the data into a Smith Chart: Click on Smith Chart to open a new Smith Chart and click "Import Live" to import from "live measurement".
+Plotted in a Smith Chart the three standards should look like this:
+  
+
+Figure 8. Open, Load and Short standard measured after calibration
+
+
+If the open, short or load graphs are not at the right positions, your calibration is failed and you will not be able to do proper measurements. Make sure you have followed the instructions above and  contact support , if you are not able to resolve the problem. 
+Not, that the standards only give dots if you have selected ideal standards. If you use real calibration kit data, you will see no dots but the real calibration kit data. See section calibration kit settings for details. 
+Now you are ready for your first measurement:
+Open the "live measurement" window, enter your desired scan parameters as you did in calibration and press scan. PocketVNA now scans and presents your first measurement on the screen. 
+Main window
+In the main window you can open several sub windows of the types
+  
+
+Figure 9. The main window
+1. Menu
+2. Toolbar: you can open either “Live Measurements”, New “Smith Chart”, New “XYY Plot”, “Markers” or “Calibration”  window by hitting the corresponding button. Toolbar is movable and can be aligned to any edge of the Main Window.
+3. Status-Bar -- shows connection status and temperature on the device if supported. If a device supports an alternative Interface or there are several devices connected, you'll see a list of possible connections. 
+Pay attention that some standard shortcuts work for subwindows. Close Tab/subwindow CTRL+W; switch between tabs/subwindows CTRL+TAB or invert CTRL+SHIFT+TAB
+
+
+Menu
+File menu items
+* New Project  -- close all windows and start new session
+* Open/Import -- performs import for a currently active subwindow. “Live Measurements” accepts calibration files; “Smith Chart” accepts touchstone (s1p/s2p) or excel files (xlsx). And so on
+* Save/Export -- save or export data for a currently active subwindow. “Live Measurements” allows exporting data to a touchstone file. “Xyy Plot” allows export each data-set into a separate touchstone file, or into separate Sheet inside Excel (xlsx) file
+* Recent Projects -- contains list of recent projects.
+* Load Project -- load stored session
+* Save Project -- save current session into file
+* Save Project as -- saves current session into new/particular file
+* Close All -- close all subwindows and opens clear “Live measurements” window
+* Quit
+View menu items
+* Smith Chart, Live Measurements, XYY Plot -- open corresponding window
+* Switch between Document and Tab modes -- by default all windows are shown as subwindows on the Multi-document-interface. But it can be shown as arbitrary tabs: each tab contains a single window. This item can switch between these modes
+* Show(Hide) Toolbar -- show or hide the Toolbar. May increase working space a bit
+* Full Screen -- switch between Windowed and Fullscreen mode. F11 key can be used as alternative
+* Markers -- open dock-window with marker stuff
+* Load Frequency Markers/Bands -- opens  open file dialog to load Frequency Markers on Frequency Bands (zones, ranges)
+Window menu -- list of currently open subwindows
+Tools menu items
+* Calibration -- show calibration window
+* Enter Firmware Update Mode -- pocketVna device’s firmware can be updated by Flip software (on Windows) or by dfu-programmer (a command line tool). To allow Slip/dfu-programmer to rewrite firmware it is required to enter this Firmware Update mode. In this mode the device can not scan. Please note, some devices do not support this. 
+* Force Unlock Device -- It is highly unrecommended to share the same device between several programs (API, Apps). To restrict this, some locks are used. Unfortunately, On Linux-like systems the device may be locked after a previous instance was crashed or terminated  in an improper way. If you are sure there is no other application or API using the instance, you can Force unlock the locked device
+* Warm-UP -- there is a recommendation to warm-up a device before taking measurements by keeping it connected to USB for a mere 15 minutes. This feature speeds this up
+* App Settings: see below
+App Settings
+Here you can change:
+  
+
+Figure 10. App settings
+
+
+Velocity factor: The velocity factor used in distance domain measurements
+External coupler
+You can use pocketVNA with an external coupler. 
+See this example setup: 
+
+
+  
+
+Figure 11. An external coupler and filter have been connected in order to expand pocketVNA capability for measurements up to 6 GHz.
+
+
+To adopt software settings select "External coupler" in Tools-App Settings
+
+
+  
+
+Figure 12. External coupler activated
+
+
+  
+
+Figure 13. When you use and external coupler and “external coupler” is selected, a red information “External Coupler” will appear in the status bar.
+
+
+
+
+Note:
+- You will see "External Coupler" written next to the "connected to pocketvna" message. 
+- You now can measure S11 if coupler is connected to port 1 and S22 if coupler is connected to port 2
+- You cannot measure S12 or S21
+- Do not forget to calibrate (Choose "Port 1 Reflection" if coupler is connected to port 1"; Choose "Port 2 Reflection" if coupler is connected to port 2")
+
+
+  
+
+Figure 14. Calibration window if external coupler is activated
+________________
+Signal generator
+pocketVNA can be used as a simple signal generator. 
+In the pocketVNA software go to Tools -> Signal Generator
+
+
+  
+
+Figure 15. Signal Generator Setup
+
+
+
+
+Select the frequency and the output port and press “Apply”. The signal will now be permanently available at the output:
+
+
+  
+
+Figure 16. Typical output of signal generator: Here the signal at 2.4 GHz
+________________
+Calibration
+
+
+Generally, the magnitude and phase of the electromagnetic wave is not only altered by the DUT, but by connectors and cables and last but not least by the components inside the pocketVNA.
+This is the main reason why network analyzers need to be calibrated. There are many ways to calibrate a VNA, only OSL (open short loop) calibration will be described here as it is the one used with the pocketVNA. For OSL, three calibration standards are required:
+- Open: Ideally this would imply infinite isolation between signal and ground. In practice, economic open standards are only termination caps shielding the signal from the surrounding
+- Short: Ideally a short standard would short signal to ground with 0 impedance over the complete frequency range.
+- Load: Ideally, load standard would connect signal to ground with the load impedance (50 ohms in our case) over the complete frequency range. This way the S parameter would be 0 and the return loss infinite.
+When doing our calibrations we will find out that we are quite far away from the ideal case.
+
+
+In the calibration window, calibration measurements can be performed, saved and loaded. Supports collecting data for several algorithms. This window is organised as a wizard. On the first step you can set scan parameters. Then, software performs required steps. After all required data are collected the Finished window is shown,
+PocketVNA software has internal temperature compensation but results are best if the device is warmed up. This is true especially for frequencies >2.7 GHz. For higher frequencies leave the device connected to the USB port for at least 20 minutes before calibrating. 
+Starting range step
+  Figure 17. Calibration start window.
+
+
+It allows to setup Scan Parameters and Calibration Algorithm data collecting for
+Range-tab (label “1”) -- set the entire range for calibration. Pay attention to the “Averaging” (see “2”) parameter it responds to how many times the whole scan should be performed and averaged; and “Adc AVG” (label “3”)-- how many times each Frequency Point should be taken to reduce a noise.
+
+
+Calibration Modes/Algorithms -- combo-box labelled as “4”, lists supported calibration algorithms and modes:
+* 2-Port SOLT with 1-port calibration kit -- simple calibration algorithm that is applied to each network parameter separately. Mode prepares data to calibration all ports for both Transmission and Reflection modes
+* 2-Port SOLT with 2-port calibration kit -- the same as above but optimised for 2-port calibration kit.
+* 2-Port FULL SOLT(TOSM) with 2-port calibration kit -- real true SOLT-TOSM (Short-Open-Load-Through\Through-Open-Short-Match) algorithm for full 2 port network (4 parameters). 2-port calibration kit is required.
+* Imitate SOLT/TOSM with 1-port kit -- the same as above but for 1-port calibration kit. It is an imitation, it is not valid for 100%
+* LRM16 16-Terms requires a 2-port calibration kit -- collects required data for LMR-16 (Load-Match-Reflect). It requires you to have a 2-port calibration kit.
+* Imitate LRM16 1-Port C-Kit -- the same as above but for 1-port calibration kit. It is an imitation, it is not valid for 100%
+* TRL 8-Terms [2-Port calibration kit] -- Through-Reflect-Line 8-terms calibration. Requires 2-port calibration kit. It is still Betta! Also you should know what you do! It requires a Line calibration standard which should have particular length depending on frequency range.
+* Imitate TRL 1-Port C-Kit" -- the same as above but for 1-port calibration kit.
+* Transmission -- simple calibration algorithm that is applied to each network parameter separately (the same as 1st clause in this list). But this mode collects data for Transmission parameters only (S21 and/or S12)
+* Port 1 Reflection -- similar to 1st clause in this list. Collects data for S11 parameter only
+* Port 2 Reflection -- similar to 1st clause in this list. Collect datas for S22 parameter only
+* Port 1 Reflection and Transmission -- similar to 1st clause in this list. Collects data for S11 and S21 network parameters
+* Port 2 Reflection and Transmission --  the same as above but for S22 and S12
+Pay attention: there are 2-port and 1-port calibration kits. The former means you have only one set of calibration terminals: Short, Open and Load terminals; the latter means you have two sets of calibration terminals. If you have two steps the data collection is performed faster in fewer steps.
+Pay attention: on Est. Time (label “5”) -- is very rough. But it can be useful to see how each parameter affects time.
+“Load” button -- you can load existing calibration file and jump onto “Finish” step of the wizard
+“Scan” button -- runs wizard step-by-step
+
+
+
+
+________________
+Calibration Kit setup
+
+
+pVNA SMA male or female calibration kit
+
+
+The basic calibration procedure assumes the calibration standards to be ideal. This means the calibration algorithm uses perfect reflection for open and short standards and perfect adsorption for the load standard. 
+However, ideal calibration standards are not available. Open and short do not reflect perfectly, and load does reflect a certain portion of the signal, phase short is not exactly 180° and also the calibration level varies a bit between the open port and the calibration standards. These properties also vary over frequency. 
+While for most measurements assuming ideal standards will give satisfactory results, for some measurements the user might want to use realistic values. 
+
+
+  
+
+Figure 18. Comparison of measurements of the ideal calibration standards - open, short and load -  (left diagram) and the real values (right side). While ideal values show precise dots, the real values are not perfect dots but the position changes with frequency
+
+
+It is possible to load/save or change the calibration kit data in the calibration menu. 
+
+
+  
+
+Figure 19. In the calibration window select “CalKit” in order to edit calibration kit parameters
+
+
+In the CalKit menu you can select one of the pre-defined calibration kits (Ideal, pVNA SMA calkit male, …), you can load saved or external calkit data or create your own by entering delay times and loss data for the different calibration standards. 
+Currently, * is the name of the ideal calibration kit. 
+“Built-in” is the name of the SMA male calibration kit which you can buy from pocketvna.com
+
+
+  
+
+Figure 20. In the CalKit Settings window the parameters of existing or new calibration kits can be loaded, saved and edited
+
+
+For simple reflection measurements you can change only the load impedance leaving the other data ideal. This is required e.g. if you want to perform 75 Ohms measurements. 
+
+
+  
+
+Figure 21. Calibration kit setup window for simple 2-port calibrations or reflection only calibrations
+
+After having entered or loaded the correct values, click on “Use and Close” and the new values will be used during the calibration process and in the measurements. 
+The calkit settings can be also changed after the calibration progress is completed or during measurements. This is useful if you want to compare the influence of different calibration kit settings to your measurement. When you open an existing calibration file, you can find the button on the upper right side of the window. 
+  
+
+Figure 22. You can also change the calkit settings after having completed the calibration or after measurements. WIth this feature the influence of different calibration kit settings on the measurements can be investigated.
+________________
+pVNA U.FL calibration and test board
+
+
+U.FL connectors are commonly used on PCBs where space is critical. 
+The pVNA calibration and test board comprises:
+* SOLT SMA male calibration kit (first row from top)
+* SOLT SMA female calibration kit (second row)
+* U.FL TE calibration kit (third row)
+* U.FL Hirose calibration kit (fourth row)
+
+
+If you want to use the pVNA calibration and test board the calibration procedure will be slightly different:
+
+
+  
+
+Figure 23. 
+
+
+Figure 23. The pVNA calibration and test board 1.0 beta
+
+
+* Select pVNA U.FL calibration kit in the calibration kit settings. 
+* OPEN connect the cable to the load standards on the board. 
+* For SHORT connect the cable to the load standards on the board. 
+* For LOAD connect the cable to the THROUGH(!) standards on the board. This is a known bug of current calibration kit
+* For THROUGH connect the cable to the through standards on the board. 
+
+
+For the rest, the procedure is identical to the SMA calibration kit. 
+
+
+Other calibration kits
+
+
+THere are also other calibration kits such as from Agilent integrated. If you want to use your special calibration kit but cannot find it in the software, please contact us. We might be able to integrate it. 
+Taking measurements step
+  
+
+Figure 24. Each measuring step has its own window.
+
+
+1. Shows which parameters  are taking
+2. Brief information about range.
+3. Small Hint
+4. Call context menu for this plot
+5. You can change “Averaging” and “Adc AVG” for current step, and only for it
+   1. Software average
+   2. Hardware average
+6. Apply the “moving average” algorithm to smooth data. 0 means no smoothing. Select 0 (no smoothing) unless you have a good reason to change this. 
+Pay attention: the meaning of smooth value was changed! Moving average coefficient is calculated as following: value*2+1. Because neighboring odd and even values produced the same values
+7. If there is a previous Take measurements step then you can open it by using the “back”  link (on this screenshot it is disabled for this is the first step). 
+Hit “Cancel” to jump to the first Range Step. If everything is ok, take required network parameters pressing “Scan”. After data is taken you can smooth it (or not) and hit “Apply & Next” to take the next network parameters set.
+Finish Step
+  
+
+Figure 25. After calibration is completed: An overview of all measurements is shown.
+
+
+1. Title contains the source of calibration data: either File or Wizard. In this case the file was loaded
+2. Call the context menu. Now it allows to store all network parameters into Touchstone files
+3. Brief information about scan parameters
+4. Icons depicting a look of each parameter
+5. “Use” button applies calibration data to Live Measurements window. Without saving into file
+6. “Cancel” button returns to first Range Step
+7. “Load” button loads another existing calibration file into this step
+8. “Save” stores calibration file into application’s calibration file
+9. “Close” closes calibration window
+________________
+
+
+You should check if your calibration was successful for example by plotting measurements of open, short and load standards on a Smith chart:
+
+
+  
+
+Figure 26. Measurement of the open, short and load standards after calibration in order to check the quality of the calibration.
+
+
+Load should be in the middle of the diagram, short at the very left and open at the very right end of the diagram. The measurements are not perfect dots, as the calibration standards are not perfectly reflecting (open, short) or absorbing (load) and there will also be noise present.
+
+
+
+
+
+
+Live Measurements
+In this window measurements are performed
+  
+
+Figure 27. 
+  
+
+Figure 28. live measurements window (PocketVNA 1.89)
+
+
+1. Scan range setting: 
+“From” sets the start frequency of the scan
+“To” sets the stop frequency
+“Steps” is the number of measurement points taken within the set frequency range. 201 usually is a good value to start. Lower values will result in a faster scan, higher values in a higher frequency resolution. 
+By default is used linear distribution, to switch it to logarithmic check Logarithmic checkbox
+   2. Hardware Averaging value -- to reduce noise
+   3. Network Parameters -- allows to choose which network parameter should be taken. Pay attention, if you choose all 4 parameters application will apply network matrix conversion between Z ⇔ S ⇔ Y. Otherwise another formulas will be used to convert each parameter separately
+   4. Calibration -- if “Use calibration” is checked and the calibration file is loaded then calibration is to be performed before showing curves on plot. Otherwise raw data should  be shown. Use the Load button to select and load a .cali calibration file. 
+   5. “continuous” and “Accumulate” -- By checking “Continuous” scanning can be performed in an infinite loop. 
+If the “accumulate” is checked then all continuous scans are accumulated and average values should be shown on the plot. 
+   6. Toolbox
+      1. “Port Extension” -- port extension can be applied to scanned data if you add a cable after having performed the calibration. See this section for detailed usage description. Do not use it if you are not sure if you need it. 
+      2. “De-Embedding” -- see description
+      7. Switch button between usual chart and smith chart
+      8. Current Markers
+      9. Curves. Red is aligned to the right Y-Axis. On the screenshot above the red line is Time Domain, S-11 Phase. Blue curve is aligned to the right Y-Axis which currently shows Frequency domain, S21, Group delay
+      10. Set which data show for the Left Y-Axis, see description below
+      11. Edit Group Delay smooth Factor. This slider is only visible when at least one axis shows Group Delay. the meaning of smooth value was changed! Moving average coefficient is calculated as following: value*2+1. Because neighbouring odd and even values produced the same values
+      12. Call dialog to edit the Time/Distance domain Window
+      13. Set which data show for the Right Y-Axis. See bellow
+      14. Plot side panel
+      1. Polynomial fit for curves. Click on it to see the slider to adjust it. It does not affect measurements themselves 
+      2. Smooth. Click on it to see its slider. Applies moving averaging to measurements. Affects measurements
+      3. Scaling mode:
+      * Autoscaling – fits curves into measurement area
+      * Scan scaling – fits curves on Y axes but X is fixed to entire scan range
+      * No scale – no auto scaling
+      * Fixed scale – either equal to “no scale” or uses manually set ranges for each axis
+
+
+Parameters and formats for axes
+  
+
+Figure 29. Select which data will be shown in the diagram
+ 
+Magnitude (dB): Magnitude of the measured signal in dB
+Phase: difference between transmitted and measured signal
+R: Real part of Impedance
+X: Imaginary part of Impedance
+∣ Z ∣: Absolute value of impedance
+G: Conductance
+VSWR: Voltage Standing wave ratio
+Magnitude: Magnitude of the measured signal on linear scale
+Re(S): real part of the S parameter
+Im (S): imaginary part of S parameter
+Group delay: Delay of the signal passing through a DUT (https://en.wikipedia.org/wiki/Group_delay_and_phase_delay)
+Srefl and Strans: Identical to Magnitude (dB)
+ZRX_refl Identical to ZRX
+ 
+   
+Figure 30. Select which S parameters should be plotted
+ 
+Selection of S parameter (port 1 or 2 and transmission or reflection)
+ 
+  
+
+Figure 31. Frequency domain is selected as a standard, for measurements in the time/distance domain please select time or distance.
+ 
+Selection of measurement:
+-           Frequency domain
+-           Time domain
+-           Distance domain
+
+
+Time/Distance domain Windowing
+If at least one of Y-Axes uses Distance or Time domain it becomes possible to apply windowing (window function). Press the TD Win button to call a special dialog. It looks like this:
+  
+
+Figure 32. Windowing option for the time domain measurements
+
+
+      1. To enable windowing check this check-box
+      2. Plot shows how the window looks for parameters given. When you change window parameters the view changes.
+      3. Window type. It is possible to use 3 windows type
+      1. Kaiser window. Common ɑ values are: 0 -- no window, 6 -- commonly used, 13 -- maximum possible
+      2. Hann
+      3. Hamming. If  ɑ is equal to 1 that means no window. Default is 0.54.
+      4. Apply normalisation
+How windowing does work
+“Windowing is a technique that is commonly used to reduce the effects of spectral
+leakage and to improve the resulting dynamic range. Before performing the DFT, the DFT
+frame is multiplied by a window function with the same length sample by sample.” (Teppati, Ferrero “Modern RF and Microwave Measurement Techniques”  §4.4)        
+
+
+By implementation, it's  a simple multiplication of each point from a vector on a corresponding point (by index) from a window function. 
+Simplest "window" function : multiply each point on a constant 1. Each point remains the same without change. Or or   : results have half of a magnitude.
+But we can use a bit more complex window such as a triangle or a square signal function. For example, let’s assume we have some square function that generates . As a result middle points are multiplied by 0.8, and 2 starting and 2 ending are ignored (they are zeros).
+
+
+If we use a more complex function like bessel, sin, parabola or something else which produces a rounded curve, then the multiplication gives results highlighted at the centre and gradually going to 0 on ends.
+We just generate the window curve for a given level of detail for the entire range. For example If we have a vector with measurements for 100 points then we generate a complementary vector of the same size using the window function.
+
+
+For Converting from Time to Frequency domain we just multiply each point on the point from the window and only then convert results using FFT.
+      * Thus we emphasis frequencies that has most contribution and reduce signal that has less
+      * Remove unwanted noise
+Similarly, for Frequency to Time domain conversion: we just multiply  each point's magnitude on a corresponding window value and then convert the result using IFFT
+
+
+Pay attention: using a window has its own disadvantages and tradeoffs. They aren’t universal.
+
+
+“For time domain analysis of small reflections (such as looking at in-line connectors),
+using Kaiser’s  values as low as 3 provides improved resolution and the small reflections mean that side lobe values don’t interfere with the results. If there is a large reflection (such as an open or short at the end of a line), then the side lobes from the large reflection may mask the reflection of interest. In such a case, more windowing will be required to remove the side lobe effect.” (Dunsmore, “Handbook of Microwave Component Measurements”  §4.4.4)
+
+
+Linked terms: tapering function, apodization.
+Port Extension
+If you calibrate pocketVNA directly at the device but then connect your DUT with an additional cable, you need to tell the device that you are using this cable in order to compensate for the phase shift / delay caused by the cable. Since the device has 2 ports each port can have it’s own cable. So port extension settings are to be set to each port separately
+
+
+This example shows a measurement of the open standard measured directly at the device where it was also used for calibration:
+
+
+  
+
+Figure 33. Measurement of a DUT right the port where the calibration was done.
+
+
+Here what happens if you measure the open standard behind a cable:
+
+
+  
+
+Figure 34. Measurement of the DUT not at the port where the calibration was done but after an additional cable.
+
+
+The added delay can be seen by the saw tooth wave of the measured phase. This can be removed mathematically using the port extension function which can be found on the bottom left part of the live measurement window. In order to use it activate the check box: 
+  
+
+Figure 35. Port Extension check box (PocketVNA 1.89)
+ 
+Click on an ‘l’-edit to start changing length, or ‘Vf’-edit to start changing a Velocity Factor for a port. ‘0m’ length means no port extension for the port.
+Here are three ways you can find the right values for length and velocity factor:
+1. You know them e.g. from the data sheet.
+These are some velocity factors known from literature: 
+      * 0.95-0.99 -- Open-wire "Ladder" Line
+      * 0.83  -- RG-6 Belden 1189A coaxial cable 
+      * 0.82 -- RG-8X Belden 9258 coaxial cable (foamed polyethylene dielectric)
+      * 0.80 -- Belden 9085 twin-lead
+      * 0.66 -- Belden 8723 twin shielded twisted pair stranded (polypropylene insulator); RG-213 CXP213 coaxial cable (solid polyethylene dielectric); Polyethylene
+      * 0.695 -- Solid PTFE
+
+
+So 0.66 could be used when no better information is available.
+
+
+2. You can try to find it by changing the length until the phase becomes flat again. In this case velocity factor does not need to be changed and 0.66 can be used.
+3. You can measure the distance between two jumps in the saw tooth: In our example the distance between two of the jumps is around deltaf = 116.7 MHz. Using the formula:
+l=Vf*c / (2* deltaf); where Vf is the velocity factor 0.66; c is the speed of light and deltaf is the frequency difference between the jumps.
+In our example measurement, we receive l=0,8450 m for the length. Also in this case velocity factor does not need to be changed and 0.66 can be used.
+When we enter this into the port extension settings we can see the phase corrected:
+
+
+  
+
+Figure 36. The measurement with port extension activated. The phase curve is now nearly completely flat.
+
+
+The „open“ measurement is only to determine the cable delay/length and to demonstrate/check that it is working. For your measurement of e.g. an antenna behind the cable you should then use the same port extension settings as for the "open" measurement. 
+De-Embedding
+“De-embedding is a post-measurement process to minimise errors and reveal information about the device under test. When there is a composite measurement of a device under test or fixture combination, you can use de-embedding to isolate the performance of the fixture and extract (de-embed) the fixture from the measurements.
+De-embedding is mathematically removing the measurements affected by the fixture leaving only the behaviour of the device under test. This is commonly used when there are non-coaxial connections from the VNA to the DUT, and it is used on circuit board traces, backplane channels, semiconductor packages, connectors or other discrete components.” (https://www.everythingrf.com/community/what-is-de-embedding)
+  
+
+Figure 37. 
+
+
+Figure 36.2. The measurement with de-Embedding on 1st port activated.
+
+
+This implementation Imitates matlab’s deembedsparams function. It has some restrictions like limiting it to 2-Port network only and requires 2 fixtures definition so-called left-pad and right-pad
+
+
+To use de-Embedding a fixture definition should be loaded for a required pad (side). If no fixture is provided for a pad the “perfect” fixture will be applied implicitly so that measurements are not affected (In other words if there is no fixture provided for both pads, measurements would remain unchanged: 
+Right now a fixture definition can be loaded from a touchstone file only. Frequency range in a fixture should cover the entire measurements’ range. In other words, if measurements are taken for a range   a touchstone file that covers either  or   is fine. Neither  nor   nor can not be used. If a network’s frequencies for the fixture do not match measurements’ frequencies values will be interpolated.
+
+
+The pipeline of modifying measurements is the following:
+
+
+
+
+
+De-Embedding is calculating the following formula
+
+For S-Parameters formula becomes more complicated
+
+Pay attention, that matlab’s RF Toolbox   and  formulae work differently from a common standard. More precisely it uses different definitions for T-Parameters.
+The T-parameter matrix is related to the incident and reflected normalised waves at each of the ports as follows:
+  
+
+Figure 38. 
+But few books, along with Matlab’s RF Toolbox use different definition:
+  
+
+Figure 39. 
+ Adaptation for second definition requires swapping    and  . Don’t be surprised. Anyway, in terms of De-Embedding results will be the same for both definitions
+ 
+Smith Chart
+Shows data on a Smith Chart Plot. You can open several Smith Charts. Data to be plotted can either be imported from "live measurement window" or from a saved/existing file. It is useful to compare several live results or to view external file (mostly TouchStone format v1  for 1-port and 2-port)
+  Figure 40. Some measurements plotted in a Smith Chart.
+It contains the following
+      * “Import Live” button (label “1”) -- gets data from Live Measurements window
+      * “Import File” button (label “2”). Imports data from external file (*.xlsx, *.s2p...)
+      * “Remove All” button (label “3”) -- removes all data
+      * Curve’s Title (label “4”) which can be edited.
+      *   -button -- hides corresponding curve on the Chart
+      *   -button -- Removes curve from the Chart.
+      *   -- Highlight curve. For example, the third curve is highlighted on the Chart (label  “7”). Whereas two others (label “8”) are not.
+Pay attention, that this chart shows only the Reflection part (S11 or S22) of a network. Also, the 2-port touchstone file has both S11 and S22 network parameters. If you import a 2-port network into Smith Chart window 2 separate curves will be created.
+You can call a context menu for the Smith Chart which looks kind of this:
+  
+
+Figure 41. 
+         * “Save Current Markers” -- Moves data points that are closest to the mouse cursor to the "markers window". Current Markers are highlighted with black points on a plot.
+         * “Edit Marker and Save”  -- similar to “Save Current Markers” , but you can edit frequency points before placing Current Markers into the “Markers” window. If a curve on a plot does not have an exact point for a particular frequency Current Marker will be interpolated. Extrapolation is not performed.
+         * Frequency Marker: ***Hz -- stores the frequency as a frequency marker. It should be shown on the “markers window” on the right hand side of the table. Frequency marker highlights a curve’s point belonging to the frequency for each curve on a plot.
+         * “Import LIve Measurements” -- Imports data from the “Live Measurements” window.
+         * “Import File” -- imports data from a file (s2p, ...)
+         * “Export Data as…” -- allows story data into file (xlsx, s2p, …)
+         * “Remove All” -- removes all data
+         * “Print charts into image…” -- exports current plot into a png or jpeg file
+         * “Reset Scale” -- cancels any zoom
+         * “Magnify Y axes separately” --  Select(Unselect) if you want to zoom and move both Y axes at the same time or not. 
+         * “Rename window” -- Changes the title of the window. 
+________________
+XYY Plot
+Data to be plotted can either be imported from a "live measurement window" or from a saved file. You can open several XYY plots. It is useful to compare several results or external files. It looks kind of like the one below:
+
+
+  
+
+Figure 42. The XYY plot window
+
+
+It consists of the Legend (Left) and Plotting (Right) side. Legend allows to control curves. Each element of Legend is connected to plot. 
+You can see:
+            * “Import Live” button (label “1”) -- gets data from Live Measurements window
+            * “Import File” button (label “2”). Imports data from external file (*.xlsx, *.s2p...)
+            * “Remove All” button (label “3”) -- removes all data
+            * “L” and “R” buttons (labels “4”, “5”). Show curve for Y-Left axis or Y-Right axis respectively. They have colors of corresponding lines on chart. If button is unchecked then a curve (Left or Right) are not shown on a plot. For example Button “L” above label “4” is unchecked and plot shows only Right (blue) curve.
+            * The Title for a curve. It can be changed (see second legend item). If data is loaded from a file the title is equal to a file name. 
+            *   -- Removes data with curves (labels “6”, “7”)
+            *   -- Highlight curve (labels “6”, “7”) If checked then curve is highlighted. For example, it is checked above label “6”, and blue curve is thicker than another two curves.
+            * Plot Mode Selectors -- (labels “10”, “11”) -- change the mode for left (“10”) and right (“11”) Y-Axes. Pay attention that there is a context menu that allows to bind right selectors to the left, so that it may make it easier to compare different parameters for the same format (type); or to compare different formats for the same parameter.Figure 40.1 Right clicking on the area under the plot gives this context menu  
+            * Binding right selectors (either parameters, like S11,S22; or format (like Phase, Magnitude…) allows the following
+               * If Formats are bound then it makes it easy to compare different parameters for the same format. In this case changing left format changes right format automatically whereas parameters are changed independently. That makes it easy to compare different parameters for the same format at a time. For example S11 and S22 for Magnitude (dB), then, by changing left’s format to Phase comparing S11 and S22 for Phase and so on
+               * If Parameters are bound then it makes it easy to switch between Parameters by changing only the left one (right one is changing automatically) that allows to see pairs for format for the same parameter. For example S11 for Magnitude (dB) and Phase; then S22 for them so on
+               * Plot shows Current Markers that can be stored. The vertical line crossing Current Markers is labelled with “M”.
+You can call Context Menu for a plot:
+  
+
+Figure 43. Right clicking on the plot area opens this context menu
+
+
+               * “Save Current Markers” -- Moves the measurement of the data point currently under the mouse cursor’s vertical line to the "markers window". These data points are crossed with a vertical line labelled with “M” on the previous screenshot.
+               * “Edit Marker and Save”  -- similar to “Save Current Markers” , but you can edit the frequency point before placing Current Markers into the “Markers” window. If a curve on a plot does not have an exact point for a particular frequency, Current Marker will be interpolated. Extrapolation is not performed.
+               * Frequency Marker: ***Hz -- stores the frequency as a frequency marker. It should be shown on the “markers window” on the right hand side of the table. Frequency marker highlights a curve’s point belonging to the frequency for each curve on a plot.
+               * “Start selecting Frequency Band” -- starts selecting a piece of a plot with the mouse's cursor.
+               * “Import LIve Measurements” -- Imports data from the “Live Measurements” window. As a result the Frequency Range (Band, Zone) will be saved into the same windows as a Frequency Marker.
+               * “Import File” -- imports data from a file (xlsx, s2p, ...)
+               * “Export Data as…” -- allows story data into file (xlsx, s2p, csv…)
+               * “Remove All” -- removes all data
+               * “Print charts into image…” -- exports current plot into a png or jpeg file
+               * “Fit Plot to Visible Area” -- makes all curves fit into visible plot area. Sometimes, If you Zoomed-In/-Out a plot and import some other data it can’t be seen on a plot. By using this Option all curves will be in the plot area.
+               * “Magnify Y axes separately” --  Select(Unselect) if you want to zoom and move both Y axes at the same time or not. 
+               * “Rename window” -- Changes the title of the window. 
+               * “Switch Off Auto-Scale” -- disables auto-scaling of plot. At the same time indicates if the auto-scaling is Off. Pay attention that auto-scaling is switching off by panning(moving) or scaling (zooming) a plot. Auto-scaling On -- means that all curves are fitting into the visible area;
+________________
+Markers
+Clicking on Markers   in the menu bar opens the marker window. While moving the mouse over any graph, you will see the position in numbers near the mouse cursor. These values can be saved in the "Markers" window.
+Figure 44. 
+
+
+  
+
+Figure 45. Markers window
+
+
+This window is dockable and can be moved to either Left, Right, Top, Bottom edge of a window. Or can be undocked to be an “independent” window. 
+In the upper part Current Markers of the data point closest to the mouse cursor’s X-coord is plotted. 
+The lower part shows Stored Markers. In any plot via right mouse-click a marker can be fixed in this part of the window. For this right-click on the plot window and select "save marker under cursor", or “Edit Marker and Save” which allows editing frequency before fixing.
+Right-Clicking on the markers opens a menu where makers can be deleted, shown as point to line in the plot and saved to an Excel file. The name of the marker can be changed by double clicking on it. 
+  
+
+Figure 46. Right clicking on the markers menu opens this menu
+ 
+               * “Save As…” -- allows to store Stored Markers into *.csv or *.xslx file.
+               * “Load From” -- loads markers into Stored Markers from *.csv or *.xslx file.
+               * “Remove Row” -- removes currently selected rows from Stored Markers.
+               * “Clear” -- clears Stored Markers table.
+               * “Hide Marker” -- hides marker on a currently active subwindow.
+               * “Show Marker as ...” -- shows marker on a currently active subwindow as a: Point, Crossing Lines, Horizontal Line or Vertical Line.
+Edit Markers and Save dialog
+  
+
+Figure 47. The markers window
+
+
+If you choose Edit Markers and Save action in the plot's context menu the special window appears. Select any row in a table. Then you can change the frequency point, title or even remove it by pressing the Trash-icon  button. If there is no particular frequency in the curve then the application performs interpolation. After pressing “OK” Markers are moving to Markers window
+
+
+Frequency ranges
+
+
+You can select ranges of frequency that will be shown in color in the plot:
+
+
+  
+
+Figure 48. You can highlight one or more frequency ranges in the plots
+
+
+Right clicking on the plot will show you the option “Start selecting Frequency band”. Using the mouse and left click you can select the first frequency range. 
+Now open the markers window to see the values you have selected:
+
+
+  
+
+Figure 49. In this window you can directly edit the frequency ranges.
+
+
+You can double click on each range to change the frequency ranges. You can also change the color of the range or save/load values when using the right-click menu:
+  
+
+Figure 50. Right-clicking on the range gives you the option to remove the range, change the color of the range or to load/save a complete list of ranges.
+
+
+
+
+Importing/Exporting data
+
+
+There are the following file types available for import/export:
+- touchstone (s1p, s2p) format
+- .XLS, .CSV
+- .vnaproj
+
+
+Hardware specification
+2 port Network Analyzer:
+PocketVNA has two ports, where both port 1 and port 2 can be used as output. The reflected or transmitted signal can be measured on port 1 and port two. This makes pocketVNA a complete 2-port VNA which can measure S11, S21, S12 and S22 simultaneously. 
+Frequency range:
+You can perform measurements at least from 500 kHz to 4 GHz. Measurements slightly outside this region (such as 400 kHz or 4.2 GHz) might be possible but are not guaranteed. Please contact us if you want to perform measurements outside the specified frequency range.
+Dynamic range:
+Typical range is up to -70dB @50MHz and up to -40dB @4 GHz
+Dynamic range varies over frequency and depends on scan and calibration parameters such as averaging factor or smoothing.
+Impedance range:
+Resulting from the dynamic range, impedance can be typically measured from 3 to 1000 ohm. For most frequency ranges this range will be larger.
+Measurement speed:
+Measurement speed is much lower than any lab scale equipment.
+A normal scan takes about 10 ms per data point plus USB communication. As an example a 1001 points scan S11 only takes 12 seconds. By using averaging to improve resolution, speed can significantly increase. If you measure all parameters (S11, S12, S21, S22) at the same time, measurement time will be nearly four times higher!
+Number of steps:
+From 1 to 10001; Basically, the maximum number of steps is mainly limited by the available measurement time. A 10001 step scan takes about 2 minutes.
+
+
+Frequency resolution:
+1 Hz; For example you can scan from 1MHz to 1.001MHz in 1001 steps.
+Power consumption:  < 500mA; typically 400 mA
+Dimensions:
+  
+
+Figure 51. 
+(length x width x height): 90mm x 64 mm x 26mm (about 3.5" x 2.5" x 1")
+
+
+________________
+Example measurements
+A collection of example measurements. Some measurements are available as .vnaproj files in the  software section . You can download the software and import the project files in order to explore the measurements and the software functions.
+A quick filter measurement
+Step 1 calibrate:
+We calibrate transmission only. 
+  
+
+Figure 52. 
+
+
+75 Ohms measurement
+In order to measure 75Ω DUT additional external hardware is required: A 50Ω/75Ω matching pad and a 75Ω calibration kit. While pocketVNA connectors are SMA matching pad and calibration kit are BNC. 
+  
+
+Figure 53. Additional wires (SMA to BNC) and matching pads are required.
+  
+
+Figure 54. The 75 ohms calibration kit consists of open, load (75 Ω), short and through standard. All are BNC.
+
+
+Here is one example for recommended calibration settings:
+  
+
+Figure 55. Calibration type is “Simple 2-port” and we do 301 steps from 80 MHz to 700 MHz.
+
+
+In the CalKit settings we change from 50 to 75 ohms. 
+  
+
+Figure 56. Load standard setting: 75 ohms
+
+
+
+
+Measurement results, we measure the open, load and short standard:
+  
+
+Figure 57. Open, Short and Load
+
+
+And for transmission we measure through and open:
+
+
+  
+
+Figure 58. through and open measurement (S21)
+
+
+A 36 MHz Quartz Crystal:
+  Figure 59. Example measurement: A quartz crystal
+
+
+
+
+Measurement plotted as Impedance/Phase on a XY Plot and in a Smith Chart.
+Attenuator, noise floor and dynamic range measurements:
+  Figure 60. A set of attenuators in S12 measurement: 0 dB, -10 dB, -15 dB, 20 dB, -30 dB, -40 dB and -50dB from 100 MHz to 800 MHz.
+
+
+  
+
+Figure 61. Noise floor at around 350 MHz; 10 times averaging was used for calibration and measurement.
+
+
+
+
+  
+
+Figure 62. Noise floor of S21 measurement at around 4GHz
+
+
+  
+
+Figure 63. Performance <1 MHz: Noise floor from 500 kHz to 1 MHz
+
+
+
+
+
+
+2.4 GHz WLAN antenna
+  Figure 64. Return loss and VSWR measurement of a 2.4 GHz antenna measured from .6 GHz to 2.7 GHz.
+
+
+
+
+Filter measurement (transmission) and comparison with lab scale equipment
+
+
+DUT: Minicircuits VHF-2000+ SMA high pass filter
+  
+
+Figure 65. DUT VHF-2000+ high-pass filter from mini-circuits
+Measurement equipment:
+pVNA2.0; R&S ZVL and references S parameters provided by minicircuits
+
+
+Procedure:
+               * Calibrate PocketVNA. It is recommended to calibrate and measure at the end of a coax cable as it can be seen in the picture. 
+
+
+  
+
+Figure 66. DUT connected to coax cables.
+
+
+               * The simplest way is to do a transmission only calibration. Choose transmission in calibration settings and start the calibration. Only two measurements are required for this simple calibration: Through and open. For open measurement connect ports to the open standard, for through measurement connect both ports with a coax cable or the through standard. 
+  
+
+Figure 67. Calibration settings used for the transmission calibration
+
+
+
+
+
+
+
+
+  
+
+Figure 68. High pass filter measured with pVNA (blue), R&S ZVL (red) and S parameters data provided by minicircuits (green)
+
+
+The three curves are similar. While the more expensive equipment (100x the price !) is more precise to the reference data, information such as 3dB cutoff, can be obtained from all measurements with high precision. 
+
+
+
+
+Troubleshooting:
+
+
+Check for Hardware issues:
+
+
+               * In GUI Select Tools -> App Settings -> Show Device Status
+
+
+  
+
+Figure 69. Device status should show no red marks.
+
+
+               * Check measurements on internal calibration standards
+pVNA with internal calibration kit (e.g. pVNA 6G) can check functionality by testing internal open, short, load and through:
+
+
+In Tools -> App Settings -> Device settings -> Set Device Settings chose “I’m a developer” and “Internally Calibrated Short”
+        
+  
+
+Figure 70. Settings to access the internal calibration kit
+
+
+This settings will measure internal Short. Proceed the same way with load, open, and through. 
+
+
+Plotting the three measurements in a Smith Chart should give three dots:
+
+
+  
+
+Figure 71. Measurement of internal open, load, short should give three dots
+
+
+Plotting S12 or S21 of internal through should give a straight line around 0dB:
+
+
+  
+
+Figure 72. Measurement of internal through should give a straight line at around 0dB
+
+
+Check for Software problems:
+
+
+If you contact support it is always helpful to provide the following information:
+
+
+               * OS and GUI version that you use
+               * If possible send .proj file or measurement data or screenshots
+               * Use command line argument --verbose debug --stderr
+For example: Create shortcut for pocketVNA.exe and edit command line argument (TARGET field)
+Like E:\Downloads\pocketVNA1.m60_x86_64\pocketVNA.exe --verbose debug --stderr
+
+
+  
+
+Figure 73. 
+
+
+Then there will be log files available in the log file folder. The folder can be accessed through the GUI: GUI > Tools > App Settings > App Info > double click on logs
+
+
+  
+
+Figure 74. App Info selection
+
+
+
+
+Check for Calibration issues:
+
+
+               * Make sure Tools -> App Settings -> Device settings -> Set Device Settings is set to “Calibrated Measurements”
+
+
+  
+
+Figure 75. Setting measured data to calibrated
+
+
+               * Go to Tools -> Calibration to start a simple one port calibration:
+
+
+  
+
+Figure 76. Example settings for a 1-port calibration reflection-only
+
+
+               * Click on start and follow the instructions to connect the calibration standards. 
+               * When finished click “use”
+
+
+Go to live measurements and measure open, load and short on port 1. This should give three dots on the Smith Chart again. 
+
+
+List Of Images
+               * Figure 1. The status section shows the connected devices.
+               * Figure 2. The menu bar
+               * Figure 3. The calibration start window. Calibration range and calibration type can be selected here.
+               * Figure 4. 
+               * Figure 6. 
+               * Figure 6. 
+               * Figure 7. 
+               * Figure 8. Open, Load and Short standard measured after calibration
+               * Figure 9. The main window
+               * Figure 10. App settings
+               * Figure 11. An external coupler and filter have been connected in order to expand pocketVNA capability for measurements up to 6 GHz.
+               * Figure 12. External coupler activated
+               * Figure 13. When you use and external coupler and “external coupler” is selected, a red information “External Coupler” will appear in the status bar.
+               * Figure 14. Calibration window if external coupler is activated
+               * Figure 15. Signal Generator Setup
+               * Figure 16. Typical output of signal generator: Here the signal at 2.4 GHz
+               * Figure 17. Calibration start window.
+               * Figure 18. Comparison of measurements of the ideal calibration standards - open, short and load -  (left diagram) and the real values (right side). While ideal values show precise dots, the real values are not perfect dots but the position changes with frequency
+               * Figure 19. In the calibration window select “CalKit” in order to edit calibration kit parameters
+               * Figure 20. In the CalKit Settings window the parameters of existing or new calibration kits can be loaded, saved and edited
+               * Figure 21. Calibration kit setup window for simple 2-port calibrations or reflection only calibrations
+               * Figure 22. You can also change the calkit settings after having completed the calibration or after measurements. WIth this feature the influence of different calibration kit settings on the measurements can be investigated.
+               * Figure 23. 
+               * Figure 24. Each measuring step has its own window.
+               * Figure 25. After calibration is completed: An overview of all measurements is shown.
+               * Figure 26. Measurement of the open, short and load standards after calibration in order to check the quality of the calibration.
+               * Figure 27. 
+               * Figure 28. live measurements window (PocketVNA 1.89)
+               * Figure 29. Select which data will be shown in the diagram
+               * Figure 30. Select which S parameters should be plotted
+               * Figure 31. Frequency domain is selected as a standard, for measurements in the time/distance domain please select time or distance.
+               * Figure 32. Windowing option for the time domain measurements
+               * Figure 33. Measurement of a DUT right the port where the calibration was done.
+               * Figure 34. Measurement of the DUT not at the port where the calibration was done but after an additional cable.
+               * Figure 35. Port Extension check box (PocketVNA 1.89)
+               * Figure 36. The measurement with port extension activated. The phase curve is now nearly completely flat.
+               * Figure 37. 
+               * Figure 38. 
+               * Figure 39. 
+               * Figure 40. Some measurements plotted in a Smith Chart.
+               * Figure 41. 
+               * Figure 42. The XYY plot window
+               * Figure 43. Right clicking on the plot area opens this context menu
+               * Figure 44. 
+               * Figure 45. Markers window
+               * Figure 46. Right clicking on the markers menu opens this menu
+               * Figure 47. The markers window
+               * Figure 48. You can highlight one or more frequency ranges in the plots
+               * Figure 49. In this window you can directly edit the frequency ranges.
+               * Figure 50. Right-clicking on the range gives you the option to remove the range, change the color of the range or to load/save a complete list of ranges.
+               * Figure 51. 
+               * Figure 52. 
+               * Figure 53. Additional wires (SMA to BNC) and matching pads are required.
+               * Figure 54. The 75 ohms calibration kit consists of open, load (75 Ω), short and through standard. All are BNC.
+               * Figure 55. Calibration type is “Simple 2-port” and we do 301 steps from 80 MHz to 700 MHz.
+               * Figure 56. Load standard setting: 75 ohms
+               * Figure 57. Open, Short and Load
+               * Figure 58. through and open measurement (S21)
+               * Figure 59. Example measurement: A quartz crystal
+               * Figure 60. A set of attenuators in S12 measurement: 0 dB, -10 dB, -15 dB, 20 dB, -30 dB, -40 dB and -50dB from 100 MHz to 800 MHz.
+               * Figure 61. Noise floor at around 350 MHz; 10 times averaging was used for calibration and measurement.
+               * Figure 62. Noise floor of S21 measurement at around 4GHz
+               * Figure 63. Performance <1 MHz: Noise floor from 500 kHz to 1 MHz
+               * Figure 64. Return loss and VSWR measurement of a 2.4 GHz antenna measured from .6 GHz to 2.7 GHz.
+               * Figure 65. DUT VHF-2000+ high-pass filter from mini-circuits
+               * Figure 66. DUT connected to coax cables.
+               * Figure 67. Calibration settings used for the transmission calibration
+               * Figure 68. High pass filter measured with pVNA (blue), R&S ZVL (red) and S parameters data provided by minicircuits (green)
+               * Figure 69. Device status should show no red marks.
+               * Figure 70. Settings to access the internal calibration kit
+               * Figure 71. Measurement of internal open, load, short should give three dots
+               * Figure 72. Measurement of internal through should give a straight line at around 0dB
+               * Figure 73. 
+               * Figure 74: App Info selection
+               * Figure 75: Setting measured data to calibrated 
+               * Figure 76: Example settings for a 1-port calibration reflection-only
